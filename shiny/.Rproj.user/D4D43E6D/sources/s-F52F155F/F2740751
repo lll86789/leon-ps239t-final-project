@@ -1,0 +1,22 @@
+{
+    "collab_server" : "",
+    "contents" : "",
+    "created" : 1557270389918.000,
+    "dirty" : false,
+    "encoding" : "UTF-8",
+    "folds" : "",
+    "hash" : "3068041359",
+    "id" : "F2740751",
+    "lastKnownWriteTime" : 1557375173,
+    "last_content_update" : 1557375173678,
+    "path" : "C:/Data/leon-ps239t-final-project/shiny/global.r",
+    "project_path" : "global.r",
+    "properties" : {
+        "cursorPosition" : "13,17",
+        "scrollLine" : "0"
+    },
+    "relative_order" : 2,
+    "source_on_save" : false,
+    "source_window" : "",
+    "type" : "r_source"
+}
