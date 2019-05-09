@@ -38,6 +38,9 @@ navbarPage("Population of Taiwan", id="tw",
                         actionButton("modeltrain", "Train",
                                      style="padding:5px; opacity: .80; color: #fff; background-color: #4169E1; border-color: #4169E1")
                         )
+                      ), 
+                      fluidRow(
+                        h2(textOutput("message"), style = "color: red")
                       )
                     )
                     

@@ -4,6 +4,8 @@ function(input, output, session) {
     uploadedlist <- lapply(input$file1$datapath, FUN = function(x){
       df <- fread(x, stringsAsFactors = FALSE)
       names(df) <- c("Year", "COUNTYNAME", "Total_pop")
+      df$COUNTYNAME <- as.character(df$COUNTYNAME)
+      for(i in nl) df$COUNTYNAME[grepl(i, df$COUNTYNAME)] <- i
       return(df)
     })
     names(uploadedlist) <- substr(input$file1[[1]], 1, regexpr("\\.csv", input$file1[[1]]) - 1)
@@ -79,6 +81,11 @@ function(input, output, session) {
       }
       
     }
+  })
+  observeEvent(input$modeltrain, {
+    output$message <- renderText({
+      return("Model has trained!")
+    })
   })
   
   
