@@ -1,5 +1,7 @@
 Author: Chih Cheng Lee (Leon)
+
 Date: May 08, 2019
+
 Project: Population of Taiwan
 
 # Short Description
@@ -9,7 +11,9 @@ The goal of this project is to let us do exploratory data analysis easier.
 
 # Dependencies
 language: R
+
 version.string: R version 3.5.1 (2018-07-02)
+
 OS: Windows
 
 # Files
