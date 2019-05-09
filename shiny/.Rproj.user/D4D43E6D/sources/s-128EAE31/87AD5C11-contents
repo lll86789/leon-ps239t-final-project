@@ -112,5 +112,67 @@ for(i in nl) DI$COUNTYNAME[grepl(i, DI$COUNTYNAME)] <- i
 
 write.csv(DI, "./data/result/disposable_income.csv", row.names = FALSE)
 
+###
+air <- fread("./data/air_condition.csv", stringsAsFactors = FALSE, skip = 4, fill = TRUE, header = FALSE)
+air <- air[1:20, ]
+air$V1 <- NULL
+air <- as.data.frame(apply(air, 2, FUN = function(x) as.numeric(gsub("\\W", "", x))), stringsAsFactors = FALSE)
+names(air) <- c("Year", var_name)
+setDF(air)
+air <- melt(air, id = 1, variable.name = "COUNTYNAME", value.name = "Total_pop")
+air$COUNTYNAME <- as.character(air$COUNTYNAME)
+for(i in nl) air$COUNTYNAME[grepl(i, air$COUNTYNAME)] <- i
 
+write.csv(air, "./data/result/air_condition.csv", row.names = FALSE)
 
+###
+crime <- fread("./data/crime.csv", stringsAsFactors = FALSE, skip = 4, fill = TRUE, header = FALSE)
+crime <- crime[1:20, ]
+crime$V1 <- NULL
+crime <- as.data.frame(apply(crime, 2, FUN = function(x) as.numeric(gsub("\\W", "", x))), stringsAsFactors = FALSE)
+names(crime) <- c("Year", var_name)
+setDF(crime)
+crime <- melt(crime, id = 1, variable.name = "COUNTYNAME", value.name = "Total_pop")
+crime$COUNTYNAME <- as.character(crime$COUNTYNAME)
+for(i in nl) crime$COUNTYNAME[grepl(i, crime$COUNTYNAME)] <- i
+
+write.csv(crime, "./data/result/crime.csv", row.names = FALSE)
+
+###
+garbage <- fread("./data/garbage.csv", stringsAsFactors = FALSE, skip = 4, fill = TRUE, header = FALSE)
+garbage <- garbage[1:20, ]
+garbage$V1 <- NULL
+garbage <- as.data.frame(apply(garbage, 2, FUN = function(x) as.numeric(gsub("\\W", "", x))), stringsAsFactors = FALSE)
+names(garbage) <- c("Year", var_name)
+setDF(garbage)
+garbage <- melt(garbage, id = 1, variable.name = "COUNTYNAME", value.name = "Total_pop")
+garbage$COUNTYNAME <- as.character(garbage$COUNTYNAME)
+for(i in nl) garbage$COUNTYNAME[grepl(i, garbage$COUNTYNAME)] <- i
+
+write.csv(garbage, "./data/result/garbage.csv", row.names = FALSE)
+
+###
+hospital <- fread("./data/hospital.csv", stringsAsFactors = FALSE, skip = 4, fill = TRUE, header = FALSE)
+hospital <- hospital[1:20, ]
+hospital$V1 <- NULL
+hospital <- as.data.frame(apply(hospital, 2, FUN = function(x) as.numeric(gsub("\\W", "", x))), stringsAsFactors = FALSE)
+names(hospital) <- c("Year", var_name)
+setDF(hospital)
+hospital <- melt(hospital, id = 1, variable.name = "COUNTYNAME", value.name = "Total_pop")
+hospital$COUNTYNAME <- as.character(hospital$COUNTYNAME)
+for(i in nl) hospital$COUNTYNAME[grepl(i, hospital$COUNTYNAME)] <- i
+
+write.csv(hospital, "./data/result/hospital.csv", row.names = FALSE)
+
+###
+nursery <- fread("./data/nursery.csv", stringsAsFactors = FALSE, skip = 4, fill = TRUE, header = FALSE)
+nursery <- nursery[1:20, ]
+nursery$V1 <- NULL
+nursery <- as.data.frame(apply(nursery, 2, FUN = function(x) as.numeric(gsub("\\W", "", x))), stringsAsFactors = FALSE)
+names(nursery) <- c("Year", var_name)
+setDF(nursery)
+nursery <- melt(nursery, id = 1, variable.name = "COUNTYNAME", value.name = "Total_pop")
+nursery$COUNTYNAME <- as.character(nursery$COUNTYNAME)
+for(i in nl) nursery$COUNTYNAME[grepl(i, nursery$COUNTYNAME)] <- i
+
+write.csv(nursery, "./data/result/nursery.csv", row.names = FALSE)
