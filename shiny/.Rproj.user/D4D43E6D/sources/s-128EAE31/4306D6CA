@@ -5,7 +5,7 @@
     "dirty" : false,
     "encoding" : "UTF-8",
     "folds" : "",
-    "hash" : "3417870521",
+    "hash" : "0",
     "id" : "4306D6CA",
     "lastKnownWriteTime" : 1557386221,
     "last_content_update" : 1557386221858,
@@ -13,7 +13,7 @@
     "project_path" : "ui.r",
     "properties" : {
         "cursorPosition" : "140,76",
-        "scrollLine" : "119"
+        "scrollLine" : "0"
     },
     "relative_order" : 4,
     "source_on_save" : false,
