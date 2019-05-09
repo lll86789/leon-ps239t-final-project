@@ -5,15 +5,15 @@
     "dirty" : false,
     "encoding" : "UTF-8",
     "folds" : "",
-    "hash" : "3113541979",
+    "hash" : "3417870521",
     "id" : "4306D6CA",
-    "lastKnownWriteTime" : 1557380623,
-    "last_content_update" : 1557380623926,
+    "lastKnownWriteTime" : 1557386221,
+    "last_content_update" : 1557386221858,
     "path" : "C:/Data/leon-ps239t-final-project/shiny/ui.r",
     "project_path" : "ui.r",
     "properties" : {
-        "cursorPosition" : "42,69",
-        "scrollLine" : "27"
+        "cursorPosition" : "140,76",
+        "scrollLine" : "119"
     },
     "relative_order" : 4,
     "source_on_save" : false,

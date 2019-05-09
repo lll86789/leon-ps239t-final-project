@@ -3,7 +3,7 @@ function(input, output, session) {
   uploadedData <- reactive({
     uploadedlist <- lapply(input$file1$datapath, FUN = function(x){
       df <- fread(x, stringsAsFactors = FALSE)
-      names(df) <- c("Year", "COUNTYNAME", "Total_pop")
+      names(df) <- c("Year", "COUNTYNAME", "Total_pop")#set it to a standard name
       df$COUNTYNAME <- as.character(df$COUNTYNAME)
       for(i in nl) df$COUNTYNAME[grepl(i, df$COUNTYNAME)] <- i
       return(df)
@@ -11,17 +11,18 @@ function(input, output, session) {
     names(uploadedlist) <- substr(input$file1[[1]], 1, regexpr("\\.csv", input$file1[[1]]) - 1)
     mappinglist2 <- c(mappinglist, uploadedlist)
     return(mappinglist2)
-  })
+  })#reactive data after uploaded new data
   
   observe({
     updateSelectInput(session, "Datatype", choices = names(uploadedData()))
+    updateSelectInput(session, "Datatype2", choices = names(uploadedData()))
     updateSelectInput(session, "Datatype_model", choices = c("Select a dataset to train" = "", names(uploadedData())))
-  })
-  modelData <- reactive({
+  })#update dataset list
+  modelData <- reactive({#update data after trained the data
     if(input$modeltrain == 0){
       return(uploadedData())
     }else {
-      if (input$model == "Auto ARIMA"){
+      if (input$model == "Auto ARIMA"){#model using ARIMA
         trainedData <- lapply(names(uploadedData()), FUN = function(x){
           df <- uploadedData()[[x]]
           if (x %in% input$Datatype_model){
@@ -86,7 +87,7 @@ function(input, output, session) {
     output$message <- renderText({
       return("Model has trained!")
     })
-  })
+  })#update the message
   
   
   filteredData <- reactive({
@@ -97,16 +98,16 @@ function(input, output, session) {
       County2 <- dplyr::left_join(x = County, y = modelData()[[input$Datatype]], by = "COUNTYNAME")
       return(County2[County2$Year == input$year, ])
     }
-  })
+  })#Update the map data
   colorpal <- reactive({
     df1 <- as.data.frame(filteredData())
     colorNumeric(input$colors, df1$Total_pop)
-  })
+  })#Update the color scale
   output$mymap <- renderLeaflet({
     leaflet(Bound) %>%
       fitBounds(~min(long), ~min(lat), ~max(long), ~max(lat))
     
-  })
+  })#map output with a specific boundary
   observe({
     pal <- colorpal()
     
@@ -118,7 +119,7 @@ function(input, output, session) {
                           lng = ~x, lat = ~y, label = ~CountyName,
                           labelOptions = labelOptions(noHide = TRUE, direction = 'top', textOnly = TRUE))
     
-  })
+  })#update map after any settings
   
   observe({
     proxy <- leafletProxy("mymap", data = filteredData())
@@ -131,7 +132,7 @@ function(input, output, session) {
                           title = input$Datatype
       )
     }
-  })
+  })#update legend after changed settings
   
   
   output$timeseries <- renderPlot({
@@ -155,7 +156,8 @@ function(input, output, session) {
       return(p)
     }
     
-  })
+  })#return time series plot
+  
   output$poppyramid <- renderPlot({
     event <- input$mymap_shape_click
     if (is.null(event)) {
@@ -191,9 +193,8 @@ function(input, output, session) {
         )
       return(n1)
     }
-    
-    
-  })
+  })#return population pyramid plot
+  
   output$countyname <- renderText({
     event <- input$mymap_shape_click
     if (is.null(event)) {
@@ -202,7 +203,8 @@ function(input, output, session) {
       countyoutput <- Countylist[Countylist$COUNTYNAME == event$id, ]$COUNTYENG
       return(paste0(event$id, " (", countyoutput, ")"))
     }
-  })
+  })#return country name to attribute panel
+  
   output$county_num <- renderText({
     event <- input$mymap_shape_click
     if (is.null(event)) {
@@ -220,14 +222,16 @@ function(input, output, session) {
       }
       return(paste0(input$Datatype, " :", countyoutput_num))
     }
-  })
+  })#return values in a county to attribute panel
+  
   observeEvent(input$Datatype, {
     changeyear <- modelData()[[input$Datatype]]
     
     maxyear <- max(changeyear$Year)
     minyear <- min(changeyear$Year)
     updateSliderInput(session, "year", max = maxyear, min = minyear)
-  })
+  })#update year
+  
   output$greywarn <- renderText({
     event <- input$mymap_shape_click
     if(is.null(event)){
@@ -235,7 +239,8 @@ function(input, output, session) {
     }else{
       return(NULL)
     }
-  })
+  })#message to remind you select a region
+  
   output$redwarn <- renderText({
     event <- input$mymap_shape_click
     if(is.null(event)){
@@ -243,9 +248,9 @@ function(input, output, session) {
     }else{
       return("* Red line means 2018.")
     }
-  })
+  })#message to tell you the red line means 2018
   
-  output$thetable <- DT::renderDataTable({
+  output$thetable <- DT::renderDataTable({#output of the data table
     if(input$Datatype2 == "Population"){
       df <- formalpop 
       df <- left_join(x = df, y = Countylist, by = "COUNTYNAME")
@@ -283,7 +288,6 @@ function(input, output, session) {
     
     DT::datatable(df, options = list(ajax = list(url = action)), escape = FALSE)
     
-    
   })
   
   observeEvent(input$Datatype2, {
@@ -296,6 +300,6 @@ function(input, output, session) {
       updateNumericInput(session, "maxyear", max = maxyear2, min = minyear2, value = maxyear2)
     }
     
-  })
+  })#update year
   
 }

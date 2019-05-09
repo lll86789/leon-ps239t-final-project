@@ -1,26 +1,28 @@
+###load necessary packages
 library(tidyverse)
 library(data.table)
 
-
+###set system language to Chinese
 Sys.setlocale(category = "LC_ALL", locale = "cht")
-setwd("C:/Data/leon-ps239t-final-project/shiny")
+###set working directory
+setwd("./shiny")
 ##set variable name
 nam <- c("County", "Sex", "Total", "c0", "c1to4", "c1", "c2", "c3", "c4", "c5to9", 
          "c10to14", "c15to19", "c20to24", "c25to29", "c30to34", "c35to39", "c40to44", "c45to49", 
          "c50to54", "c55to59", "c60to64", "c65to69", "c70to74", "c75to79", "c80to84", "c85to89", 
          "c90to94", "c95to99", "c100")
 ##make a county list
-pop <- openxlsx::read.xlsx("./data/COUNTY.xlsx", sheet = "105", startRow = 4)
-pop <- pop[, c(1:29)]
-setDT(pop)
-names(pop) <- nam
-pop <- pop[!is.na(Total), ]
-pop$County <- rep(pop$County[!is.na(pop$County)], each = 3)
-pop <- pop[Sex != "計"&!County %in% c("福建省", "總計", "臺灣地區", "臺灣省"), ]
-county_list <- pop[, c(1:2)]
-county_list <- county_list[!grepl("新竹市|嘉義市|高雄縣|臺中縣|臺南縣", County), ]
+pop <- openxlsx::read.xlsx("./data/COUNTY.xlsx", sheet = "105", startRow = 4)#read data
+pop <- pop[, c(1:29)]#select necessary columns
+setDT(pop)#set it to data.table
+names(pop) <- nam#rename
+pop <- pop[!is.na(Total), ]#delete NA data
+pop$County <- rep(pop$County[!is.na(pop$County)], each = 3)#generate missing county value
+pop <- pop[Sex != "計"&!County %in% c("福建省", "總計", "臺灣地區", "臺灣省"), ]#delete unnecessary data
+county_list <- pop[, c(1:2)]#select county column
+county_list <- county_list[!grepl("新竹市|嘉義市|高雄縣|臺中縣|臺南縣", County), ]#delete unnecessary data
 nl <- c("臺中", "臺南", "高雄", "新竹", "嘉義")
-for(i in nl) county_list[grepl(i, County), ]$County <- substr(county_list[grepl(i, County), ]$County, 1, 2)
+for(i in nl) county_list[grepl(i, County), ]$County <- substr(county_list[grepl(i, County), ]$County, 1, 2)#rename some county
 
 ###read data function
 readPop <- function(x){
@@ -30,18 +32,18 @@ readPop <- function(x){
   names(pop) <- nam
   pop <- pop[!is.na(Total), ]
   pop$County <- rep(pop$County[!is.na(pop$County)], each = 3)
-  pop$County <- gsub("\\s", "", pop$County)
-  pop <- pop[, lapply(.SD, as.numeric), by = .(County, Sex)]
-  pop <- pop[, c(1:2, 4:5, 10:29)][Sex != "計"&!County %in% c("福建省", "總計", "臺灣地區", "臺灣省"), ]
-  pop[, `:=`(c0to4 = c0+c1to4, c85 = c85to89 + c90to94 + c95to99 + c100, County = ifelse(grepl("臺北縣", County), "新北市", ifelse(grepl("桃園縣", County), "桃園市", County)))]
-  pop <- pop[, c(1:2, 25, 5:20, 26)]
+  pop$County <- gsub("\\s", "", pop$County)#delete space in county name
+  pop <- pop[, lapply(.SD, as.numeric), by = .(County, Sex)]#transform character to numeric
+  pop <- pop[, c(1:2, 4:5, 10:29)][Sex != "計"&!County %in% c("福建省", "總計", "臺灣地區", "臺灣省"), ]#select necessary columns and delete unnecessary data
+  pop[, `:=`(c0to4 = c0+c1to4, c85 = c85to89 + c90to94 + c95to99 + c100, County = ifelse(grepl("臺北縣", County), "新北市", ifelse(grepl("桃園縣", County), "桃園市", County)))]#modify data to necessary form
+  pop <- pop[, c(1:2, 25, 5:20, 26)]#select necessary data
   
   nl <- c("臺中", "臺南", "高雄")
   nl2 <- c("新竹", "嘉義")
   for (i in nl){
     pop[grepl(i, County), ]$County <- substr(pop[grepl(i, County), ]$County, 1, 2)
     pop <- pop[, lapply(.SD, sum), by = .(County, Sex)]
-  }
+  }#sum up some county and replace their name
   if (x >= 71){
     for (i in nl2){
       pop[grepl(i, County), ]$County <- substr(pop[grepl(i, County), ]$County, 1, 2)
@@ -52,7 +54,7 @@ readPop <- function(x){
     for (i in nl2){
       pop[grepl(i, County), ]$County <- substr(pop[grepl(i, County), ]$County, 1, 2)
     }
-  }
+  }#dealing with this two county which has missing data before 1982
   
   pop <- dplyr::left_join(x = county_list, y = pop, by = c("County", "Sex"))
   return(pop)
@@ -63,34 +65,35 @@ pop_all <- rbindlist(lapply(63:107, FUN = function(x){
   df$Year <- rep(x + 1911, nrow(df))
   df <- df[, c(21, 1:20)]
   return(df)
-}))
+}))#read all data and merge them into a dataframe
 
 names(pop_all)[2] <- "COUNTYNAME"
-pop_total <- pop_all[, c(1:2, 4:21)][, lapply(.SD, FUN = sum), by = .(Year, COUNTYNAME)]
+pop_total <- pop_all[, c(1:2, 4:21)][, lapply(.SD, FUN = sum), by = .(Year, COUNTYNAME)]#make new rows which sum up the values in different sex
 pop_total$Sex <- "Total"
 pop_total <- pop_total[, c(1:2, 21, 3:20)]
 pop_all <- rbind(pop_all, pop_total)
-pop_all$Total_pop <- rowSums(pop_all[, 4:21])
-pop_all$Sex <- ifelse(pop_all$Sex == "男", "Male", ifelse(pop_all$Sex == "女", "Female", pop_all$Sex))
+pop_all$Total_pop <- rowSums(pop_all[, 4:21])#calculate total population instead of age-specific population
+pop_all$Sex <- ifelse(pop_all$Sex == "男", "Male", ifelse(pop_all$Sex == "女", "Female", pop_all$Sex))#translate sex from Chinese to English
 
 write.csv(pop_all, "./data/result/Total_population.csv", row.names = FALSE)
 
-###
+###Create value names
 var_name <- fread("./data/unemploymentrate.csv", stringsAsFactors = FALSE, skip = 2, fill = TRUE)
 var_name <- gsub("\\W", "", names(var_name)[3:24])
 ###
 unemploymentrate <- fread("./data/unemploymentrate.csv", stringsAsFactors = FALSE, skip = 4, fill = TRUE)
-unemploymentrate <- unemploymentrate[1:20, ]
+unemploymentrate <- unemploymentrate[1:20, ]#select necessary columns
 unemploymentrate$V1 <- NULL
-unemploymentrate$V23 <- gsub("\\W", "", unemploymentrate$V23)
+unemploymentrate$V23 <- gsub("\\W", "", unemploymentrate$V23)#delete punctuations
 unemploymentrate$V23 <- as.numeric(unemploymentrate$V23)
 unemploymentrate$V24 <- gsub("\\W", "", unemploymentrate$V24)
 unemploymentrate$V24 <- as.numeric(unemploymentrate$V24)
 names(unemploymentrate) <- c("Year", var_name)
 setDF(unemploymentrate)
-unemploymentrate <- melt(unemploymentrate, id = 1, variable.name = "COUNTYNAME", value.name = "Total_pop")
-unemploymentrate$COUNTYNAME <- as.character(unemploymentrate$COUNTYNAME)
-for(i in nl) unemploymentrate$COUNTYNAME[grepl(i, unemploymentrate$COUNTYNAME)] <- i
+unemploymentrate <- melt(unemploymentrate, id = 1, variable.name = "COUNTYNAME", 
+                         value.name = "Total_pop")#reshape the dataframe
+unemploymentrate$COUNTYNAME <- as.character(unemploymentrate$COUNTYNAME)#transform factor to character
+for(i in nl) unemploymentrate$COUNTYNAME[grepl(i, unemploymentrate$COUNTYNAME)] <- i#rename county
 write.csv(unemploymentrate, "./data/result/unemploymentrate.csv", row.names = FALSE)
 
 ###
