@@ -22,7 +22,7 @@ The following files and folders are stored here: "leon-ps239T-final-project\shin
 
 * COUNTY.xlsx: The Population of Taiwan in County level - the population of Taiwan in county level from 1974 to 2018(01縣市人口按性別及五齡組(63): https://www.ris.gov.tw/app/portal/346). 
 * unemploymentrate.csv: The Unemployment Rate of Taiwan in County level - the unemploymen rate of Taiwan in county level from 1998 to 2017(人力資源 / 失業率(％): https://statdb.dgbas.gov.tw/pxweb/Dialog/statfile9.asp). 
-* disposable_income.csv: The Average Disposable income of Taiwan in County level - the average disposable income of Taiwan in county level from 1998 to 2017(人力資源 / 失業率(％): https://statdb.dgbas.gov.tw/pxweb/Dialog/statfile9.asp). 
+* disposable_income.csv: The Average Disposable income of Taiwan in County level - the average disposable income of Taiwan in county level from 1998 to 2017(家庭收支 / 家庭收支-平均每戶可支配所得(元): https://statdb.dgbas.gov.tw/pxweb/Dialog/statfile9.asp). 
 
 ## Data (Generated)
 The following files and folders are stored here: "leon-ps239T-final-project\shiny\data\result"
