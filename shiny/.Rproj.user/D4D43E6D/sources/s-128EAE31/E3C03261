@@ -5,17 +5,17 @@
     "dirty" : false,
     "encoding" : "UTF-8",
     "folds" : "",
-    "hash" : "0",
+    "hash" : "2920586686",
     "id" : "E3C03261",
-    "lastKnownWriteTime" : 1557386806,
-    "last_content_update" : 1557386806297,
+    "lastKnownWriteTime" : 1557389060,
+    "last_content_update" : 1557389060580,
     "path" : "C:/Data/leon-ps239t-final-project/shiny/server.r",
     "project_path" : "server.r",
     "properties" : {
-        "cursorPosition" : "302,16",
-        "scrollLine" : "280"
+        "cursorPosition" : "118,16",
+        "scrollLine" : "102"
     },
-    "relative_order" : 3,
+    "relative_order" : 2,
     "source_on_save" : false,
     "source_window" : "",
     "type" : "r_source"

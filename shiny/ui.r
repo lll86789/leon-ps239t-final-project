@@ -27,7 +27,7 @@ navbarPage("Population of Taiwan", id="tw",#make tab page
                                selectInput("model", 
                                            label = "Model Type",
                                            choices = list("Auto ARIMA", 
-                                                          "Bootstrap"),
+                                                          "Exponential Smoothing"),
                                            selected = "Auto ARIMA")#select a model
                         ), 
                         column(2, 

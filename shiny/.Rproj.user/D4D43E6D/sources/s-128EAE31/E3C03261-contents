@@ -77,6 +77,58 @@ function(input, output, session) {
         names(trainedData) <- names(uploadedData())
         return(trainedData)
         
+      }else if (input$model == "Exponential Smoothing") {#Exponential
+        trainedData <- lapply(names(uploadedData()), FUN = function(x){
+          df <- uploadedData()[[x]]
+          if (x %in% input$Datatype_model){
+            if (x == "Population"){
+              setDT(df)
+              df <- df[order(COUNTYNAME, Sex, Year), ]
+              Countynamelist <- unique(df$COUNTYNAME)
+              Sexlist <- unique(df$Sex)
+              trainedDf <- rbindlist(lapply(Countynamelist, FUN = function(y){
+                sexDf <- data.table()
+                for (i in Sexlist){
+                  trainingData <- df[COUNTYNAME == y& Sex == i, ]
+                  setDF(trainingData)
+                  resultslist <- data.frame(lapply(names(trainingData)[4:21], FUN = function(k){
+                    results <- round(as.numeric(ses(trainingData[, k], h = input$trainyear, initial = "optimal", lambda = "auto")$mean), 0)
+                    return(results)
+                  }))
+                  names(resultslist) <- names(trainingData)[4:21]
+                  
+                  resDf <- data.table(Year = c((max(df$Year) + 1):(max(df$Year) + input$trainyear)), 
+                                      COUNTYNAME = rep(y, input$trainyear), 
+                                      Sex = rep(i, input$trainyear))
+                  resDf <- cbind(resDf, resultslist)
+                  resDf$Total_pop <- rowSums(resultslist)
+                  resDf <- rbind(df[COUNTYNAME == y& Sex == i, ], resDf)
+                  sexDf <- rbind(sexDf, resDf)
+                }
+                setDT(sexDf)
+                return(sexDf)
+              }))
+              df <- trainedDf
+              
+            }else {
+              setDT(df)
+              df <- df[order(COUNTYNAME, Year), ]
+              Countynamelist <- unique(df$COUNTYNAME)
+              trainedDf <- rbindlist(lapply(Countynamelist, FUN = function(y){
+                results <- round(as.numeric(ses(df[COUNTYNAME == y, ]$Total_pop, h = input$trainyear, initial = "optimal", lambda = "auto")$mean), 0)
+                resDf <- data.table(Year = c((max(df$Year) + 1):(max(df$Year) + input$trainyear)), 
+                                    COUNTYNAME = rep(y, input$trainyear), 
+                                    Total_pop = results)
+                resDf <- rbind(df[COUNTYNAME == y, ][, c(1:3)], resDf)
+                return(resDf)
+              }))
+              df <- trainedDf
+            }
+          }
+          return(df)
+        })
+        names(trainedData) <- names(uploadedData())
+        return(trainedData)
       }else {
         return(uploadedData())
       }
